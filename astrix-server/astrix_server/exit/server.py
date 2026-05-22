@@ -65,7 +65,9 @@ def _make_app(config) -> web.Application:
         enable_cleanup_closed=True,
     )
 
-    app.on_startup.append(lambda a: logger.info("Astrix exit server started"))
+    async def _on_startup(app):
+        logger.info("Astrix exit server started")
+    app.on_startup.append(_on_startup)
 
     app.router.add_post("/tunnel", _handle_tunnel_post)
     app.router.add_get("/healthz", _handle_healthz)
