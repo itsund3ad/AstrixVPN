@@ -211,7 +211,7 @@ class ServerShell:
         )
         await site.start()
 
-        apply_socket_opts(runner)
+        apply_socket_opts(site)
 
         self.running = True
 

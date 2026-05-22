@@ -90,6 +90,13 @@ Batch:   base64( nonce(12) || AES-256-GCM( flags_byte || client_id(16) || u16_fr
 Compression: Zstd level 1 (SpeedFastest), skip if <512 bytes
 ```
 
+## Known aiohttp / Python 3.14 runtime pitfalls (all fixed)
+
+- `web.TCPConnector` does not exist → import `TCPConnector` from `aiohttp` directly
+- `app._runner` does not exist in aiohttp >=4 → never access private `_runner` on app; apply socket opts via `site.server.sockets` after `site.start()`
+- `on_startup`/`on_cleanup` lambdas cause `TypeError: 'NoneType' object can't be awaited` → always use `async def` callbacks
+- `runner.server.sockets` → use `site.server.sockets` after `site.start()`; fallback to `getattr(site, '_server', None)` for compat
+
 ## Key performance constants (optimization targets)
 
 | Constant | File | Astrix Default | Notes |
@@ -196,6 +203,7 @@ make clean                  # remove build dirs
 |---|---|
 | 2026-05-22 | Astrix v2 optimization: zero-copy inline marshal/unmarshal, Event-based wakeup, adaptive compression, adaptive batch sizing (1–64), endpoint quality scoring, watchdog timer, `--benchmark` mode, pipeline drain pattern, inline decode_batch (no per-frame function call), TCP_NODELAY+QUICKACK on all sockets, concurrency semaphore, setup wizard, diagnostics, health monitor, session viewer, import/export |
 | 2026-05-22 | Release & CI/CD: GitHub Actions build + release workflows, Makefile, cross-build-win.sh, build-all.sh, versioninfo.txt, PyInstaller spec files |
+| 2026-05-22 | Runtime error fixes round 1: `web.TCPConnector` → `TCPConnector` from `aiohttp` directly; `app._runner.server.sockets` → removed; sync lambda `on_startup` → `async def`; `apply_socket_opts(runner)` → `apply_socket_opts(site)` using `site.server.sockets` |
 
 ## MCP memory entities (knowledge graph)
 

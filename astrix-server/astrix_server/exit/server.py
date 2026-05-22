@@ -40,9 +40,13 @@ _MaxConcurrentUpstream = 256
 _UpstreamSemaphore: Optional[asyncio.Semaphore] = None
 
 
-def apply_socket_opts(runner: web.AppRunner) -> None:
-    """Set TCP_NODELAY on all server sockets."""
-    for sock in runner.server.sockets:
+def apply_socket_opts(site: web.TCPSite) -> None:
+    """Set TCP_NODELAY on all server listening sockets."""
+    server = getattr(site, 'server', None) or getattr(site, '_server', None)
+    if server is None:
+        return
+    sockets = getattr(server, 'sockets', None) or ()
+    for sock in sockets:
         try:
             sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         except (OSError, AttributeError):
