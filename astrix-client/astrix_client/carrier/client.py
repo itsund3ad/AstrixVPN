@@ -14,9 +14,6 @@ from astrix_client.config.client import ClientConfig, ScriptKeyEntry
 from astrix_client.frame.frame import (
     Frame,
     FlagSYN,
-    FlagFIN,
-    FlagACK,
-    FlagRST,
 )
 from astrix_client.crypto.crypto import Crypto, encode_batch, decode_batch
 from astrix_client.session.session import SessionPool, DrainSnapshot

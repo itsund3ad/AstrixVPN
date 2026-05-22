@@ -71,8 +71,6 @@ if not spec_path.exists():
     PyInstaller.__main__.run(args)
 
 print(f"Building {NAME}...")
-import PyInstaller.__main__
-
 PyInstaller.__main__.run([
     str(spec_path),
     "--clean",

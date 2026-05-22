@@ -10,7 +10,7 @@ from collections import deque
 from dataclasses import dataclass, field
 from typing import Optional
 
-from astrix_server.frame.frame import Frame, SessionIDLen, FlagSYN, FlagFIN, FlagACK, FlagRST
+from astrix_server.frame.frame import Frame
 
 TxBufHighWater = 8 * 1024 * 1024
 

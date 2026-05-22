@@ -1,6 +1,6 @@
 [Unit]
 Description=Astrix VPN Server — VPS exit node
-Documentation=https://github.com/itsund3ad/astrix
+Documentation=https://github.com/itsund3ad/AstrixVPN
 After=network-online.target nss-lookup.target
 Wants=network-online.target
 

@@ -3,7 +3,6 @@
 
 import asyncio
 import logging
-import os
 import sys
 
 from astrix_client import __version__

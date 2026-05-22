@@ -13,7 +13,6 @@ from aiohttp import web
 
 from astrix_server.frame.frame import (
     Frame,
-    SessionIDLen,
     ClientIDLen,
     FlagSYN,
     FlagFIN,
@@ -206,7 +205,6 @@ async def _upstream_worker(
     start_time: float,
 ):
     """Manage one upstream TCP connection with Event-based notification."""
-    pool: SessionPool = app["pool"]
     stats: Stats = app["stats"]
 
     if not session.target:

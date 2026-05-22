@@ -6,7 +6,7 @@
 set -euo pipefail
 
 ASTRIX_VERSION="$(cat "$(dirname "$0")/../VERSION" | tr -d ' \n')"
-ASTRIX_REPO="https://github.com/itsund3ad/astrix"
+ASTRIX_REPO="https://github.com/itsund3ad/AstrixVPN"
 ASTRIX_CONFIG_DIR="/etc/astrix"
 ASTRIX_LOG_DIR="/var/log/astrix"
 ASTRIX_PID_DIR="/var/run"

@@ -16,7 +16,7 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/itsund3ad/astrix"
+Repository = "https://github.com/itsund3ad/AstrixVPN"
 
 [project.scripts]
 astrix-client = "astrix_client.__main__:main"
