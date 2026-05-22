@@ -1,0 +1,163 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    name: Build Linux amd64
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python 3.14
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install system deps
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq upx-ucl
+
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install -e astrix-client
+          pip install -e astrix-server
+
+      - name: Build astrix-client (Linux)
+        run: python astrix-client/build_exe.py
+
+      - name: Build astrix-server (Linux)
+        run: python astrix-server/build_exe.py
+
+      - name: Package Linux binaries
+        run: |
+          VERSION=$(cat VERSION)
+          cd dist
+          for f in astrix-client-v* astrix-server-v*; do
+            if [ -f "$f" ] && [ ! -f "$f.tar.gz" ]; then
+              tar czf "${f}-linux-amd64.tar.gz" "$f"
+            fi
+          done
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-binaries
+          path: dist/*.tar.gz
+          if-no-files-found: error
+
+  build-windows:
+    name: Build Windows amd64
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python 3.14
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install -e astrix-client
+          pip install -e astrix-server
+
+      - name: Build astrix-client (Windows)
+        run: python astrix-client/build_exe.py
+
+      - name: Build astrix-server (Windows)
+        run: python astrix-server/build_exe.py
+
+      - name: Package Windows binaries
+        run: |
+          $version = Get-Content VERSION -Raw
+          $version = $version.Trim()
+          $client = Get-ChildItem "dist/astrix-client-v*.exe" | Select-Object -First 1
+          $server = Get-ChildItem "dist/astrix-server-v*.exe" | Select-Object -First 1
+          if ($client) {
+            $newname = "astrix-client-v$version-windows-amd64.exe"
+            $zipname = "astrix-client-v$version-windows-amd64.zip"
+            Move-Item $client.FullName "dist/$newname"
+            Compress-Archive -Path "dist/$newname" -DestinationPath "dist/$zipname"
+          }
+          if ($server) {
+            $newname = "astrix-server-v$version-windows-amd64.exe"
+            $zipname = "astrix-server-v$version-windows-amd64.zip"
+            Move-Item $server.FullName "dist/$newname"
+            Compress-Archive -Path "dist/$newname" -DestinationPath "dist/$zipname"
+          }
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-binaries
+          path: dist/*.zip
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    needs: [build-linux, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          VERSION=$(cat VERSION)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          cat <<'EOF' > release-notes.md
+          ## Astrix v${VERSION}
+
+          ### What's Changed
+          - see commits
+
+          ### Assets
+          - **Linux amd64**: `astrix-client-*.tar.gz` — standalone ELF, no deps
+          - **Linux amd64**: `astrix-server-*.tar.gz` — standalone ELF, no deps
+          - **Windows amd64**: `astrix-client-*.zip` — standalone PE, no deps
+          - **Windows amd64**: `astrix-server-*.zip` — standalone PE, no deps
+
+          ### Usage
+          ```bash
+          # Linux
+          tar xzf astrix-client-v${VERSION}-linux-amd64.tar.gz
+          ./astrix-client-v${VERSION} --config /etc/astrix/client.json
+
+          # Windows (double-click or CLI)
+          astrix-client-v${VERSION}-windows-amd64.exe --config client_config.json
+          ```
+          EOF
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Astrix v${{ steps.notes.outputs.version }}
+          body_path: release-notes.md
+          files: |
+            artifacts/linux-binaries/*.tar.gz
+            artifacts/windows-binaries/*.zip
+          draft: false
+          prerelease: false

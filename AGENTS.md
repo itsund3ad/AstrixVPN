@@ -10,7 +10,22 @@
 .
 ├── astrix-client/          → Python SOCKS5 client (PyInstaller → .exe)
 ├── astrix-server/          → Python VPS exit server (PyInstaller → .exe)
+├── astrix-client/          → Python SOCKS5 client (PyInstaller → .exe)
+│   ├── astrix-client.spec  → PyInstaller spec file
+│   └── build_exe.py        → PyInstaller build script
+├── astrix-server/          → Python VPS exit server (PyInstaller → .exe)
+│   ├── astrix-server.spec  → PyInstaller spec file
+│   └── build_exe.py        → PyInstaller build script
+├── .github/workflows/      → GitHub Actions CI/CD
+│   ├── build.yml           → PR/merge check (lint + smoke build)
+│   └── release.yml         → Tagged release (linux + windows artifacts)
 ├── apps-script/Code.gs     → Optimized Google Apps Script forwarder
+├── scripts/
+│   ├── build-all.sh        → Build all platforms locally
+│   ├── cross-build-win.sh  → Windows .exe via Docker + wine
+│   ├── bump_version.sh     → Version bumper
+│   └── versioninfo.txt     → Windows PE metadata
+├── Makefile                → `make build-all`, `make release`, etc.
 ├── AGENTS.md
 ├── main.py                 → Python 3.14 placeholder
 └── pyproject.toml
@@ -116,6 +131,19 @@ python -m astrix_server --config server_config.json --start   # headless
 # PyInstaller .exe
 cd astrix-client && python build_exe.py        # → dist/astrix-client(.exe)
 cd astrix-server && python build_exe.py        # → dist/astrix-server(.exe)
+
+# Makefile (Linux only)
+make build-client-linux     # → dist/astrix-client-vX.Y.Z
+make build-server-linux     # → dist/astrix-server-vX.Y.Z
+make build-all-linux        # both
+make release                # build + .tar.gz archives
+make clean                  # remove build dirs
+
+# Cross-compile Windows .exe (requires Docker)
+./scripts/cross-build-win.sh all
+
+# Build all platforms
+./scripts/build-all.sh
 ```
 
 ## Config fields
@@ -167,6 +195,7 @@ cd astrix-server && python build_exe.py        # → dist/astrix-server(.exe)
 | Date | Changes |
 |---|---|
 | 2026-05-22 | Astrix v2 optimization: zero-copy inline marshal/unmarshal, Event-based wakeup, adaptive compression, adaptive batch sizing (1–64), endpoint quality scoring, watchdog timer, `--benchmark` mode, pipeline drain pattern, inline decode_batch (no per-frame function call), TCP_NODELAY+QUICKACK on all sockets, concurrency semaphore, setup wizard, diagnostics, health monitor, session viewer, import/export |
+| 2026-05-22 | Release & CI/CD: GitHub Actions build + release workflows, Makefile, cross-build-win.sh, build-all.sh, versioninfo.txt, PyInstaller spec files |
 
 ## MCP memory entities (knowledge graph)
 
