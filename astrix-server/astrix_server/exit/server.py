@@ -40,6 +40,15 @@ _MaxConcurrentUpstream = 256
 _UpstreamSemaphore: Optional[asyncio.Semaphore] = None
 
 
+def apply_socket_opts(runner: web.AppRunner) -> None:
+    """Set TCP_NODELAY on all server sockets."""
+    for sock in runner.server.sockets:
+        try:
+            sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        except (OSError, AttributeError):
+            pass
+
+
 def _make_app(config) -> web.Application:
     global _UpstreamSemaphore
     _UpstreamSemaphore = asyncio.Semaphore(_MaxConcurrentUpstream)
@@ -56,21 +65,12 @@ def _make_app(config) -> web.Application:
         enable_cleanup_closed=True,
     )
 
-    app.on_startup.append(_apply_socket_opts)
     app.on_startup.append(lambda a: logger.info("Astrix exit server started"))
 
     app.router.add_post("/tunnel", _handle_tunnel_post)
     app.router.add_get("/healthz", _handle_healthz)
 
     return app
-
-
-async def _apply_socket_opts(app: web.Application):
-    for sock in app._runner.server.sockets:
-        try:
-            sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        except (OSError, AttributeError):
-            pass
 
 
 async def _handle_healthz(request: web.Request) -> web.Response:

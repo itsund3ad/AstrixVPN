@@ -191,7 +191,7 @@ class ServerShell:
             self.console.print("[yellow]Already running[/yellow]")
             return
 
-        from astrix_server.exit.server import _make_app
+        from astrix_server.exit.server import _make_app, apply_socket_opts
         from aiohttp import web
 
         self._clear()
@@ -210,6 +210,8 @@ class ServerShell:
             self.config.server_port,
         )
         await site.start()
+
+        apply_socket_opts(runner)
 
         self.running = True
 
