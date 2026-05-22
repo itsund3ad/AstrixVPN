@@ -1,0 +1,15 @@
+{
+  "debug_timing": false,
+  "socks_host": "127.0.0.1",
+  "socks_port": 1080,
+  "google_host": "216.239.38.120",
+  "sni": ["www.google.com", "mail.google.com", "accounts.google.com"],
+  "script_keys": [
+    {"id": "REPLACE_WITH_DEPLOYMENT_ID", "account": "acct-a"}
+  ],
+  "tunnel_key": "REPLACE_WITH_64_HEX_CHARACTER_RANDOM_KEY",
+  "socks_user": "",
+  "socks_pass": "",
+  "coalesce_step_ms": 0,
+  "idle_slots_per_bucket": 2
+}

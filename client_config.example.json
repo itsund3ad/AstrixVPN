@@ -1,0 +1,16 @@
+{
+    "socks_host": "127.0.0.1",
+    "socks_port": 1080,
+    "socks_user": "",
+    "socks_pass": "",
+    "google_host": "216.239.38.120",
+    "sni": ["www.google.com", "www.google.com.hk", "www.google.co.jp"],
+    "script_keys": [
+        "AKfycbxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        {"id": "AKfycbyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy", "account": "acct-2"}
+    ],
+    "tunnel_key": "REPLACE_WITH_64_HEX_CHARACTER_RANDOM_KEY",
+    "coalesce_step_ms": 25,
+    "idle_slots_per_bucket": 2,
+    "debug_timing": false
+}

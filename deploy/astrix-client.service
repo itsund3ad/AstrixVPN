@@ -1,0 +1,28 @@
+[Unit]
+Description=Astrix VPN Client — TCP-over-Apps-Script tunnel
+Documentation=https://github.com/itsund3ad/astrix
+After=network-online.target nss-lookup.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/astrix-client --config /etc/astrix/client.json --daemon
+Restart=always
+RestartSec=5
+User=nobody
+Group=nogroup
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=1024
+
+[Install]
+WantedBy=multi-user.target

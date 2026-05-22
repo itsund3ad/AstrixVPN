@@ -1,0 +1,25 @@
+[project]
+name = "astrix-server"
+version = "1.0.0"
+description = "Astrix — TCP-over-Apps-Script censorship circumvention exit server"
+authors = [
+    {name = "UNDEAD", email = "undead@github.com"}
+]
+requires-python = ">=3.14"
+dependencies = [
+    "cryptography>=42.0.0",
+    "zstandard>=0.22.0",
+    "rich>=13.0.0",
+    "prompt-toolkit>=3.0.0",
+    "aiohttp>=3.9.0",
+    "click>=8.0.0",
+]
+
+[project.urls]
+Repository = "https://github.com/itsund3ad/astrix"
+
+[project.scripts]
+astrix-server = "astrix_server.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["astrix_server*"]
