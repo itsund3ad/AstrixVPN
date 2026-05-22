@@ -12,8 +12,7 @@ import os
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).parent
-os.chdir(ROOT)
+ROOT = Path(__file__).resolve().parent
 
 version = "0.0.0"
 version_file = ROOT.parent / "VERSION"
@@ -27,10 +26,9 @@ if "--version" in sys.argv:
 try:
     import PyInstaller  # noqa
 except ImportError:
-    print("Installing PyInstaller...")
     os.system(f"{sys.executable} -m pip install pyinstaller --quiet")
 
-# Use static spec if available
+# Use static spec if available (preferred — deterministic build)
 spec_path = ROOT / "astrix-client.spec"
 if spec_path.exists():
     print(f"Using existing spec: {spec_path}")
@@ -54,15 +52,22 @@ else:
             str(ROOT / "astrix_client" / "__main__.py"),
             f"--name=astrix-client-v{version}",
             "--onefile", "--console", "--clean",
+            f"--specpath={ROOT}",
+            f"--distpath={ROOT / 'dist'}",
+            f"--workpath={ROOT / 'build'}",
             f"--add-data={config_path}{os.pathsep}.",
             "--strip",
         ] + upx + excludes + [
             "--collect-all=astrix_client",
         ])
 
-print(f"Building {spec_path.name}...")
 import PyInstaller.__main__
-PyInstaller.__main__.run([str(spec_path), "--clean"])
+PyInstaller.__main__.run([
+    str(spec_path.resolve()),
+    "--clean",
+    f"--distpath={ROOT / 'dist'}",
+    f"--workpath={ROOT / 'build'}",
+])
 
 out = f"dist/astrix-client-v{version}{'.exe' if sys.platform == 'win32' else ''}"
 print(f"\nDone: {out}")

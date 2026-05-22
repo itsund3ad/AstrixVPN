@@ -9,10 +9,9 @@ import os
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).parent
-PKG = ROOT / "astrix_server"
+ROOT = Path(os.path.abspath(SPECPATH))
 
-version = "0.1.0"
+version = "0.0.0"
 try:
     with open(ROOT.parent / "VERSION") as f:
         version = f.read().strip()
@@ -22,7 +21,7 @@ except Exception:
 block_cipher = None
 
 a = Analysis(
-    [str(PKG / "__main__.py")],
+    [str(ROOT / "astrix_server" / "__main__.py")],
     pathex=[str(ROOT)],
     binaries=[],
     datas=[
@@ -40,37 +39,13 @@ a = Analysis(
     hooksconfig={},
     runtime_hooks=[],
     excludes=[
-        "tkinter",
-        "unittest",
-        "pytest",
-        "test",
-        "distutils",
-        "setuptools",
-        "pip",
-        "wheel",
-        "numpy",
-        "matplotlib",
-        "scipy",
-        "pandas",
-        "PIL",
-        "cv2",
-        "tensorflow",
-        "torch",
-        "IPython",
-        "jupyter",
-        "notebook",
-        "qtconsole",
-        "sphinx",
-        "docutils",
-        "nose",
-        "coverage",
-        "cython",
-        "dateutil",
-        "requests",
-        "urllib3",
-        "charset_normalizer",
-        "idna",
-        "certifi",
+        "tkinter", "unittest", "pytest", "test",
+        "distutils", "setuptools", "pip", "wheel",
+        "numpy", "matplotlib", "scipy", "pandas",
+        "PIL", "cv2", "tensorflow", "torch",
+        "IPython", "jupyter", "notebook",
+        "sphinx", "docutils", "nose", "coverage",
+        "requests", "urllib3",
     ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
