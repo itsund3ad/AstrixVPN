@@ -52,7 +52,7 @@ else:
             f"--name=astrix-server-v{version}",
             "--onefile", "--console", "--clean",
             f"--specpath={ROOT}",
-            f"--distpath={ROOT / 'dist'}",
+            f"--distpath={ROOT.parent / 'dist'}",
             f"--workpath={ROOT / 'build'}",
             f"--add-data={config_path}{os.pathsep}.",
             "--strip",
@@ -64,9 +64,10 @@ import PyInstaller.__main__
 PyInstaller.__main__.run([
     str(spec_path.resolve()),
     "--clean",
-    f"--distpath={ROOT / 'dist'}",
+    f"--distpath={ROOT.parent / 'dist'}",
     f"--workpath={ROOT / 'build'}",
 ])
 
-out = f"dist/astrix-server-v{version}{'.exe' if sys.platform == 'win32' else ''}"
+dist_dir = ROOT.parent / 'dist'
+out = f"{dist_dir}/astrix-server-v{version}{'.exe' if sys.platform == 'win32' else ''}"
 print(f"\nDone: {out}")
