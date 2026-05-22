@@ -9,7 +9,7 @@ import socket
 import time
 from typing import Optional
 
-from aiohttp import web
+from aiohttp import web, TCPConnector
 
 from astrix_server.frame.frame import (
     Frame,
@@ -51,7 +51,7 @@ def _make_app(config) -> web.Application:
     app["stats"] = Stats()
     app["dnscache"] = DNSCache()
     app["config"] = config
-    app["upstream_connector"] = web.TCPConnector(
+    app["upstream_connector"] = TCPConnector(
         ttl_dns_cache=600,
         enable_cleanup_closed=True,
     )
@@ -90,7 +90,7 @@ async def _handle_tunnel_post(request: web.Request) -> web.Response:
     crypto: Crypto = request.app["crypto"]
     pool: SessionPool = request.app["pool"]
     stats: Stats = request.app["stats"]
-    upstream_connector: web.TCPConnector = request.app["upstream_connector"]
+    upstream_connector: TCPConnector = request.app["upstream_connector"]
     now = time.time()
 
     stats.polls_served += 1
@@ -201,7 +201,7 @@ async def _handle_tunnel_post(request: web.Request) -> web.Response:
 async def _upstream_worker(
     app: web.Application,
     session,
-    upstream_connector: web.TCPConnector,
+    upstream_connector: TCPConnector,
     start_time: float,
 ):
     """Manage one upstream TCP connection with Event-based notification."""
