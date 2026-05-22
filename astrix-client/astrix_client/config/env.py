@@ -4,7 +4,6 @@
 
 import json
 import os
-from typing import Optional
 
 from astrix_client.config.client import ClientConfig, ScriptKeyEntry
 

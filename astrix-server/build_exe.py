@@ -10,7 +10,10 @@
 
 import os
 import sys
+import os
 from pathlib import Path
+
+import PyInstaller.__main__
 
 ROOT = Path(__file__).resolve().parent
 
@@ -46,7 +49,6 @@ else:
         ]
         upx = ["--upx-dir=/usr/bin"] if os.path.exists("/usr/bin/upx") else ["--noupx"]
 
-        import PyInstaller.__main__
         PyInstaller.__main__.run([
             str(ROOT / "astrix_server" / "__main__.py"),
             f"--name=astrix-server-v{version}",
@@ -60,7 +62,6 @@ else:
             "--collect-all=astrix_server",
         ])
 
-import PyInstaller.__main__
 PyInstaller.__main__.run([
     str(spec_path.resolve()),
     "--clean",

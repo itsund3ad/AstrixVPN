@@ -6,28 +6,16 @@ import asyncio
 import json
 import logging
 import os
-import shutil
-import time
-from pathlib import Path
 from typing import Optional
 
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from rich.layout import Layout
-from rich.live import Live
 from rich.text import Text
 from rich.prompt import Prompt, Confirm
 from rich.syntax import Syntax
 from rich import box
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn
-
-from prompt_toolkit import Application
-from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.layout import Layout as PTLayout
-from prompt_toolkit.layout.containers import Window, HSplit, VSplit
-from prompt_toolkit.layout.controls import FormattedTextControl
-from prompt_toolkit.application import get_app
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from astrix_client import __version__
 from astrix_client.config.client import (
@@ -56,7 +44,7 @@ class ClientShell:
         self._running_task: Optional[asyncio.Task] = None
         self._carrier_ref = None
         self._socks_ref = None
-        self._pool_ref: Optional[SessionPool] = None
+        self._pool_ref: Optional['SessionPool'] = None
         self._bandwidth_last = (0.0, 0)  # (time, bytes_sent)
 
     def _clear(self):

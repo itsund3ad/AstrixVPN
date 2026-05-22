@@ -7,7 +7,6 @@ import logging
 import os
 import signal
 import sys
-import time
 from typing import Optional, Callable, Awaitable
 
 logger = logging.getLogger("daemon")

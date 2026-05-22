@@ -16,7 +16,7 @@ from astrix_client.frame.frame import (
     FlagSYN,
 )
 from astrix_client.crypto.crypto import Crypto, encode_batch, decode_batch
-from astrix_client.session.session import SessionPool, DrainSnapshot
+from astrix_client.session.session import SessionPool
 from astrix_client.carrier.fronting import FrontedClient
 
 logger = logging.getLogger("carrier")
@@ -211,9 +211,7 @@ class Carrier:
                 self._last_activity = time.monotonic()
 
                 # --- Pipeline stage 2: Encode (CPU-bound, uses pool) ---
-                t0 = time.monotonic()
                 body = encode_batch(self._crypto, self._client_id, frames)
-                encode_time = time.monotonic() - t0
 
                 # --- Pipeline stage 3: POST (network-bound) ---
                 t1 = time.monotonic()
@@ -230,11 +228,9 @@ class Carrier:
                 if status == 200:
                     ep.consecutive_failures = 0
                     if resp_body:
-                        t2 = time.monotonic()
                         cid, resp_frames = decode_batch(
                             self._crypto, resp_body
                         )
-                        decode_time = time.monotonic() - t2
                         await self._dispatch_response_frames(resp_frames)
                         ep.total_bytes_recv += len(resp_body)
 
@@ -308,7 +304,6 @@ class Carrier:
         """Monitor endpoint health, revive dead endpoints, auto-select best."""
         while self._running:
             await asyncio.sleep(_HealthPollInterval)
-            now_t = time.monotonic()
             for ep in self._endpoints:
                 if ep.consecutive_failures >= _MaxConsecutiveFailures and not ep.is_dead:
                     ep.is_dead = True
