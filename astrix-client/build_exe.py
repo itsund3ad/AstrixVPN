@@ -10,7 +10,6 @@
 
 import os
 import sys
-import os
 from pathlib import Path
 
 import PyInstaller.__main__

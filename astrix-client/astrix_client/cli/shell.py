@@ -23,6 +23,7 @@ from astrix_client.config.client import (
     load_client_config,
     ScriptKeyEntry,
 )
+from astrix_client.session.session import SessionPool
 
 logger = logging.getLogger("cli")
 
@@ -44,7 +45,7 @@ class ClientShell:
         self._running_task: Optional[asyncio.Task] = None
         self._carrier_ref = None
         self._socks_ref = None
-        self._pool_ref: Optional['SessionPool'] = None
+        self._pool_ref: Optional[SessionPool] = None
         self._bandwidth_last = (0.0, 0)  # (time, bytes_sent)
 
     def _clear(self):
