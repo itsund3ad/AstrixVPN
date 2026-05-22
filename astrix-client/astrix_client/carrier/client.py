@@ -119,7 +119,7 @@ class Carrier:
                     )
                 )
 
-        sni_hosts = config.sni if isinstance(config.sni, list) else [config.sni]
+        sni_hosts = config.sni_hosts if isinstance(config.sni_hosts, list) else [config.sni_hosts]
         self._fronting = FrontedClient(
             google_ip=config.google_host,
             sni_hosts=sni_hosts,
